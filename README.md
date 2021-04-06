@@ -1,5 +1,7 @@
 # Running X11 apps from Docker on MacOS or Linux
-This is more for running X11 apps from Docker Desktop on MacOS host than Linux host since running docker on Linux has more ways to achieve this.
+This is more for running X11 apps from Docker Desktop on MacOS host than Linux host since running docker on Linux has more ways to share X11 directly. Because sharing X11 on MacOS using Docke Desktop is limited, the only way I could find is using X11 Forwarding through ssh. So this docker image built on 20.04 LTS (Focal Fossa) with sshd.
+
+This image also contains Python3 and libraries for machine learning with matplotlib.
 
 # Build the Image
 ```bash
