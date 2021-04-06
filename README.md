@@ -11,7 +11,7 @@ docker run -dit -p 26:22 --name pythonx11 pythonx11
 
 # Run Python Apps
 ```bash
-# Host
+# Host: using XQuartz on Mac
 xhost +
 
 # Enter docker using ssh with X11 Forwarding, password: ml
