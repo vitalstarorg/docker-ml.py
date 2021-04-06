@@ -14,11 +14,11 @@ docker run -dit -p 26:22 --name pythonx11 pythonx11
 # Host
 xhost +
 
-# Enter docker using ssh
+# Enter docker using ssh with X11 Forwarding
 ssh -X -p 26 ml@localhost
 
-# Enter docker using docker cli
-docker exec -it ml /bin/bash
+# Test X11
+xclock
 
 # Test App
 ./sample1.py
