@@ -58,6 +58,5 @@ EXPOSE 22
 
 USER $USER
 
-# this is working
 ENTRYPOINT ["./startup.sh"]
 CMD ["/bin/sh"]
