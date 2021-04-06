@@ -14,7 +14,7 @@ docker run -dit -p 26:22 --name pythonx11 pythonx11
 # Host
 xhost +
 
-# Enter docker using ssh with X11 Forwarding
+# Enter docker using ssh with X11 Forwarding, password: ml
 ssh -X -p 26 ml@localhost
 
 # Test X11
