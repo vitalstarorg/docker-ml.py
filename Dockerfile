@@ -1,5 +1,10 @@
 FROM ubuntu:focal
 
+ARG ssh_pub_key
+
+ENV LANG=en_US.UTF-8
+ENV LC_CTYPE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 ENV REMOVE_DASH_LINECOMMENT="true"
 ENV SHELL /bin/bash
 ENV UID 1000
@@ -12,10 +17,22 @@ RUN usermod -aG sudo $USER
 
 WORKDIR $HOME
 
-# X11 & OpenSSH
+# ~/.ssh make ssh password-less
+RUN mkdir -p $HOME/.ssh && \
+    chmod 0700 $HOME/.ssh && \
+    echo "$ssh_pub_key" > $HOME/.ssh/authorized_keys && \
+    chmod 600 $HOME/.ssh/authorized_keys && \
+    chown -R $USER:root $HOME/.ssh
+
+# copy resource files
+ADD bin ./bin
+RUN chmod -R +x bin/*
+RUN chown -R $USER:root $HOME/bin
+
+# X11 & OpenSSH & Basic Tools
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    xorg openssh-server sudo vim
+    xorg openssh-server sudo wget vim tmux htop
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   # sudoer doesn't need password
 RUN echo "X11UseLocalHost no" >> /etc/ssh/sshd_config
@@ -39,24 +56,26 @@ RUN apt-get -y --no-install-recommends install \
     python3.9 python3-pip python3-tk
 
 # Python Libraries
-COPY requirements.txt ./requirements.txt
-RUN pip3 install --no-cache-dir -r requirements.txt
+COPY requirements*.txt ./
+RUN for i in requirements*.txt; do pip3 install --no-cache-dir -r $i; done
+RUN rm requirements*.txt
 
 # clean
 RUN apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
 
-# copy resource files
-COPY startup.sh ./startup.sh
-RUN chmod +x ./startup.sh
+# copy config files
+ADD config ./config
+RUN chown -R $USER:root $HOME/config
+RUN mv $HOME/config/.vimrc ~/.vimrc
+RUN mv $HOME/config/.vim ~/.vim
+RUN mv $HOME/config/.tmux.conf ~/.tmux.conf
+RUN /usr/bin/vim -es -u ./config/setup-vimrc -i NONE -c "PlugInstall" -c "qa"
+
 RUN service ssh start
-
-ENV LANG=en_US.UTF-8
-ENV LC_CTYPE=en_US.UTF-8
-
 EXPOSE 22
 
 USER $USER
 
-ENTRYPOINT ["./startup.sh"]
+ENTRYPOINT ["./bin/startup.sh"]
 CMD ["/bin/sh"]

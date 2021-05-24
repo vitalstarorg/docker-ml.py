@@ -1,0 +1,12 @@
+" -----------------------------------------------------------------------------
+" Plugins
+" -----------------------------------------------------------------------------
+
+call plug#begin('~/.vim/plugged')
+Plug 'godlygeek/tabular' | Plug 'plasticboy/vim-markdown'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+Plug '907th/vim-auto-save'
+Plug 'djoshea/vim-autoread'
+Plug 'vim-scripts/auto_autoread.vim'
+Plug 'vitalstarorg/multiplayer.vim'
+call plug#end()

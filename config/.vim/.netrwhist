@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =8
+let g:netrw_dirhist_8='/Users/man/mcpublic'
+let g:netrw_dirhist_7='/Users/man/bb/script/common-mac/_.vim/plugged'
+let g:netrw_dirhist_6='/Users/man/bb/script/common-mac/_.vim'
+let g:netrw_dirhist_5='/Users/man/bb/script/common-mac/_.vim/plugin'
+let g:netrw_dirhist_4='/Users/man'
+let g:netrw_dirhist_3='/Users/man/bb/script/common-mac/_.vim/plugged/markdown-preview.nvim/autoload/health'
+let g:netrw_dirhist_2='/Users/man/bb/script/common-mac'
+let g:netrw_dirhist_1='/Users/man/bb/script/common-mac/_.vim/plugged/markdown-preview.nvim/autoload/health'
+let g:netrw_dirhist_0='/Users/man/bb/script/common-mac'
+let g:netrw_dirhist_9='/Users/man/bb/script/common-mac/_.vim'

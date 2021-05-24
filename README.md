@@ -7,8 +7,7 @@ This image also contains Python3 and libraries for machine learning with matplot
 ```bash
 git clone git@github.com:vitalstarorg/docker-python3-X11.git
 cd docker-python3-X11
-docker build -t pythonx11 .
-docker run -dit -p 26:22 --name pythonx11 pythonx11
+./build.sh  # build pythonx11 image with ~/.ssh/id_rsa.pub
 ```
 
 # Run Python Apps
@@ -16,8 +15,8 @@ docker run -dit -p 26:22 --name pythonx11 pythonx11
 # Host: using XQuartz on Mac
 xhost +
 
-# Enter docker using ssh with X11 Forwarding, password: ml
-ssh -X -p 26 ml@localhost
+# Start the container and/or ssh into it with X11 Forwarding, password: ml
+./container.sh 
 
 # Test X11
 xclock
