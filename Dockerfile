@@ -32,16 +32,16 @@ RUN chown -R $USER:root $HOME/bin
 # X11 & OpenSSH & Basic Tools
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    xorg openssh-server sudo wget vim tmux htop
+    xorg openssh-server sudo vim tmux htop
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   # sudoer doesn't need password
 RUN echo "X11UseLocalHost no" >> /etc/ssh/sshd_config
   # Need this for X11 Forwarding to work
 
 # Networking Tools for diagnostic
-#RUN apt-get -y update \
-#    && apt-get -y --no-install-recommends install \
-#    net-tools iputils-ping traceroute curl
+RUN apt-get -y update \
+    && apt-get -y --no-install-recommends install \
+    net-tools iputils-ping traceroute curl wget
 
 # Build Tools
 RUN apt-get -y update \
