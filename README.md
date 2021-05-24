@@ -16,7 +16,11 @@ cd docker-python3-X11
 xhost +
 
 # Start the container and/or ssh into it with X11 Forwarding, password: ml
-./container.sh 
+./container.sh
+
+# Or
+docker run -dit -p 26:22 --name ml pythonx11
+ssh -ACX -p 26 ml@localhost
 
 # Test X11
 xclock
