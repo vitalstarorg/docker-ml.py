@@ -107,7 +107,7 @@ set laststatus=2
 set lazyredraw
 set matchpairs+=<:> " Use % to jump between pairs
 set modelines=2
-set mouse=a
+set mouse=r
 set nocompatible
 set noerrorbells visualbell t_vb=
 set noshiftround
