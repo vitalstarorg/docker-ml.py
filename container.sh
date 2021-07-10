@@ -12,6 +12,10 @@ while (( "$#" )); do
       if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
         _port=$2; shift 2; else
         echo "Error: -t port" >&2; exit 1; fi;;
+    -i|--image)
+      if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+        _image=$2; shift 2; else
+        echo "Error: -i image" >&2; exit 1; fi;;
     -s|--stop) _stop=1; shift 1;;
     -r|--restart) _restart=1; shift 1;;
     -k|--kill) _kill=1; shift 1;;
@@ -27,35 +31,48 @@ eval set -- "${params[@]}"
 if [ ! -z "$_verbose" ]; then set -x; fi
 
 # Checking running container
-docker container inspect ml > /dev/null 2>&1
-running="$?"
-
-if [ "$running" == "1" ]; then
-  message="container is stopped"
+container=$1
+if [ ! -z "$container" ]; then
+  # Checking running container
+  state=$(docker container inspect --format='{{json .State.Running}}' $container  2>&1)
+  running=$? # 0 started 1 not running 2 stopped
+  if [ "$running" == "0" ]; then
+    if [ "$state" == "true" ]; then
+      message="container is running"
+    else
+      message="container is stopped"
+      running=2
+    fi
+  else
+    message="container is not running"
+  fi
 else
-  message="container is running"
+  message="found no container_id"
+  _help=1
 fi
+
+printf "Info: %s\n" "$message"
 
 if [ ! -z "$_stop" ]; then
   if [ "$running" == "0" ]; then
-    docker stop ml
+    docker stop $container
   fi
   exit
 fi
 
 if [ ! -z "$_restart" ]; then
   if [ "$running" == "0" ]; then
-    docker stop ml
+    docker stop $container
   fi
-  docker start ml
+  docker start $container
   exit
 fi
 
 if [ ! -z "$_kill" ]; then
   if [ "$running" == "0" ]; then
-    docker stop ml
+    docker stop $container
   fi
-  docker rm -v ml
+  docker rm -v $container
   exit
 fi
 
@@ -66,27 +83,42 @@ fi
 if [ -z "$_help" ]; then
   # If not running, start a container
   if [ "$running" == "1" ]; then
-    if [ ! -z "$_path" ]; then
-      docker run -dit -p $_port:22 -v $_path:/home/ml/current --name ml pythonx11 
+    if [ -z "$_image" ]; then
+      message="--image option is needed to start a container."
+      _help=1
     else
-      docker run -dit -p $_port:22 -v $(pwd):/home/ml/current --name ml pythonx11
+      if [ ! -z "$_path" ]; then
+        docker run -dit -p $_port:22 -v $_path:/home/ml/current --name $container $_image
+      else
+        docker run -dit -p $_port:22 -v $(pwd):/home/ml/current --name $container $_image
+      fi
+      sleep 1
+    fi
+  else
+    if [ "$running" == "2" ]; then
+      docker start $container
     fi
     sleep 1
   fi
-  ssh -ACXq -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" -p $_port ml@localhost
-  exit
+  if [ -z "$_help" ]; then
+    ssh -X -q -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" -L 8501:localhost:8501 -L 4001:localhost:4001 -L 8888:localhost:8888 -L 4040:localhost:4040 -p $_port ml@localhost
+    exit
+  fi
 fi
 # help message go here
-echo "Usage: $(basename $0)
-  ssh into the container. Start the container if needed: ${message}
+echo "Usage: $(basename $0) [option] container_id
+  start, stop & ssh into the container
 
   -p --path:    Mount the path to ~/current inside container. Default is current path.
   -t --port:    Port we use for the SSH port.
+  -i --image:   Docker image.
   -s --stop:    Stop the container.
   -r --restart: Stop and start the container.
   -k --kill:    Stop and remove the container.
 
   -h --help  
   -v --verbose: Verbose
+
+  MSG: ${message}
 "
 

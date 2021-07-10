@@ -1,20 +1,35 @@
-FROM ubuntu:focal
+FROM jupyter/all-spark-notebook:ubuntu-20.04
 
 ARG ssh_pub_key
+
+# don't know why /opt/conda/bin got eliminate from PATH so the following does
+# work probably
+# eval "$(command conda shell.bash hook 2> /dev/null)"
+# The following will update ~/.bashrc to make it works
+RUN conda init bash
 
 ENV LANG=en_US.UTF-8
 ENV LC_CTYPE=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 ENV REMOVE_DASH_LINECOMMENT="true"
 ENV SHELL /bin/bash
-ENV UID 1000
+ENV UID 1001
 ENV USER ml
 ENV HOME /home/$USER
 
-#RUN useradd -rm -d $HOME -s /bin/bash -g root -G sudo -u $UID $USER
+# It is still using default user in all-spark-notebook
+# this should be a conda environment also
+#ENV USER jovyan
+#RUN echo $HOME
+#RUN echo $USER
+
+USER root
+
 RUN useradd -rm -d $HOME -s /bin/bash -g users -G sudo -u $UID $USER
-RUN echo "$USER:$USER" | chpasswd
+#RUN useradd -rm -d $HOME -s /bin/bash -g root -G sudo -u $UID $USER
 RUN usermod -aG sudo $USER
+RUN usermod -aG root $USER
+#RUN echo -e "jj\njj" | passwd $USER
 
 WORKDIR $HOME
 
@@ -23,17 +38,19 @@ RUN mkdir -p $HOME/.ssh && \
     chmod 0700 $HOME/.ssh && \
     echo "$ssh_pub_key" > $HOME/.ssh/authorized_keys && \
     chmod 600 $HOME/.ssh/authorized_keys && \
-    chown -R $USER:root $HOME/.ssh
+    chown -R $USER:users $HOME/.ssh
+    #chown -R $USER:root $HOME/.ssh
 
 # copy resource files
 ADD bin ./bin
 RUN chmod -R +x bin/*
-RUN chown -R $USER:root $HOME/bin
+RUN chown -R $USER:users $HOME/bin
+#RUN chown -R $USER:root $HOME/bin
 
 # X11 & OpenSSH & Basic Tools
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    xorg openssh-server sudo vim tmux htop
+    xorg openssh-server vim tmux htop
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   # sudoer doesn't need password
 RUN echo "X11UseLocalHost no" >> /etc/ssh/sshd_config
@@ -42,23 +59,19 @@ RUN echo "X11UseLocalHost no" >> /etc/ssh/sshd_config
 # Networking Tools for diagnostic
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    net-tools iputils-ping traceroute curl wget
+    net-tools iputils-ping traceroute
 
 # Build Tools
 RUN apt-get -y update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    libatlas-base-dev gfortran cmake build-essential git tk \
+    libatlas-base-dev cmake build-essential tk \
     && apt-get update \
     && apt-get clean \
     && apt-get autoremove -y
 
-# Python3.9 Basic
-RUN apt-get -y --no-install-recommends install \
-    python3.9 python3-pip python3-tk
-
 # Python Libraries
 COPY requirements*.txt ./
-RUN for i in requirements*.txt; do pip3 install --no-cache-dir -r $i; done
+RUN for i in requirements.nb.txt; do pip3 install --no-cache-dir -r $i; done
 RUN rm requirements*.txt
 
 # clean
@@ -67,7 +80,8 @@ RUN apt-get autoremove -y && apt-get clean && \
 
 # copy config files
 ADD config ./config
-RUN chown -R $USER:root $HOME/config
+RUN chown -R $USER:users $HOME/config
+#RUN chown -R $USER:root $HOME/config
 RUN mv $HOME/config/.vimrc ~/.vimrc
 RUN mv $HOME/config/.vim ~/.vim
 RUN mv $HOME/config/.tmux.conf ~/.tmux.conf
@@ -77,6 +91,8 @@ RUN service ssh start
 EXPOSE 22
 
 USER $USER
+# Initialize conda env for "ml" 
+RUN conda init bash
 
 ENTRYPOINT ["./bin/startup.sh"]
 CMD ["/bin/sh"]

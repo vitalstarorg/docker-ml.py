@@ -15,16 +15,34 @@ cd docker-python3-X11
 # Host: using XQuartz on Mac
 xhost +
 
-# Start the container and/or ssh into it with X11 Forwarding, password: ml
-./container.sh
+# Start the container and/or ssh into it with X11 Forwarding.
+# If everything works, this should ssh into the container without
+# asking for password as id_rsa.pub should be in authorized_keys.
+# Your current folder will be mounted ~/current inside container
+cd ~/app
+./container.sh --image pythonx11 myapp
 
-# Or
-docker run -dit -p 26:22 --name ml pythonx11
+# After the container is started, simply use this to ssh into it.
+./container.sh myapp
+
+# container.sh has more functions to control the container and ssh.
+# Simple testing can be done below for diagnostic purpose.
+docker run -dit -p 26:22 --name myapp pythonx11
 ssh -ACX -p 26 ml@localhost
 
 # Test X11
 xclock
 
-# Test App
+# Test Python App
 ./sample1.py
+```
+# Run all-spark-notebook
+This is now enhanced to run [all-spark-notebook](https://github.com/jupyter/docker-stacks/tree/master/all-spark-notebook) with X11 and ssh server together.
+```bash
+# Use this to build the notebooke & pythonx11 image instead
+./build.nb.sh
+./container.sh --image pythonx11 myapp
+
+# container.sh has the ssh tunnel for most used ports.
+docker exec -it --user ml myapp start-notebook.sh
 ```
