@@ -42,7 +42,9 @@ This is now enhanced to run [all-spark-notebook](https://github.com/jupyter/dock
 # Use this to build the notebooke & pythonx11 image instead
 ./build.nb.sh
 ./container.sh --image pythonx11 myapp
+notebook.sh # start the notebook server. Stay login to  keep the tunnels.
 
-# container.sh has the ssh tunnel for most used ports.
+# container.sh has the ssh tunnel for most used ports. Or do this and keep
+# the terminal running.
 docker exec -it --user ml myapp start-notebook.sh
 ```
