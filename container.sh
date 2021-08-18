@@ -101,7 +101,7 @@ if [ -z "$_help" ]; then
     sleep 1
   fi
   if [ -z "$_help" ]; then
-    ssh -X -q -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" -L 8501:localhost:8501 -L 4001:localhost:4001 -L 8888:localhost:8888 -L 4040:localhost:4040 -p $_port ml@localhost
+    ssh -X -q -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" -L 0.0.0.0:8501:0.0.0.0:8501 -L 0.0.0.0:8888:0.0.0.0:8888 -p $_port -t ml@localhost 'cd ~/current; bash'
     exit
   fi
 fi

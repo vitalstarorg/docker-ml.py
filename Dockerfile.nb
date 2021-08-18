@@ -50,7 +50,7 @@ RUN chown -R $USER:users $HOME/bin
 # X11 & OpenSSH & Basic Tools
 RUN apt-get -y update \
     && apt-get -y --no-install-recommends install \
-    xorg openssh-server vim tmux htop
+    xorg openssh-server vim tmux htop sqlite3
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
   # sudoer doesn't need password
 RUN echo "X11UseLocalHost no" >> /etc/ssh/sshd_config
@@ -91,6 +91,7 @@ RUN service ssh start
 EXPOSE 22
 
 USER $USER
+ENV PATH=$PATH:$HOME/bin
 # Initialize conda env for "ml" 
 RUN conda init bash
 
