@@ -167,13 +167,15 @@ let mapleader = "\\"
 nnoremap <leader>' :MarkdownPreview<CR>
 nnoremap <leader>; :set number! relativenumber!<CR>
 nnoremap <Leader>0 o<ESC>:. ! echo "\#\#\#\#" "$(date +'\%y\%m\%d')"<CR>
-nnoremap <Leader>= :Vexplore!<CR>
+nnoremap <Leader>9 o<ESC>:. ! echo "\#\#\#\#" "$(date --date='next Sunday' +'\%y\%m\%d') >"<CR>
+nnoremap <Leader>- o<ESC>:. ! open -a "Google Chrome"; cliclick kd:cmd t:dc ku:cmd kp:tab,tab,tab,space; echo -n "- [$(pbpaste)]"; cliclick kd:cmd t:lc ku:cmd; echo -n "($(pbpaste))"; cliclick kd:cmd kp:tab ku:cmd<CR><CR><CR>
+nnoremap <Leader>= /```<CR>kmmN"*y'm:!c=$(pbpaste);h=$(echo "$c" \| head -1 \| sed -ne "s/\`\`\` *\(.*\)/\\1/p"); echo "$c" \| tail -n +2 \| $h<CR><CR>
+  "trying to execute this block of code - in progress
+nnoremap <Leader>\| :Vexplore!<CR>
 nnoremap <Leader>[ :call SearchMdHeading("##*\\s*")<CR>
 nnoremap <Leader>] :/#* >>>]<CR>/^###* <CR>Nztn
-nnoremap <Leader>x :/#* >>>Hacks<CR>/^###* <CR>Nzt
-nnoremap <Leader>b :/#* >>>Backlog<CR>/^###* <CR>Nzt
-nnoremap <Leader>t :/#* >>>Todo<CR>/^###* <CR>Nzt
-nnoremap <Leader>k :/#* >>>Link<CR>/^###* <CR>Nzt
+nnoremap <Leader>b o<ESC>i```bash<CR><CR>```<ESC>k
+nnoremap <Leader>/ :.s/^\(\s*-\)\(.*\)/\1\~\~\2\~\~/<CR>:noh<CR>j
 nnoremap <Leader>i :/#* >>>Inspiration<CR>/^###* <CR>Nzt
 
 
