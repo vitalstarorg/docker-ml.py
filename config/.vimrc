@@ -178,30 +178,33 @@ nnoremap <Leader>b o<ESC>i```bash<CR><CR>```<ESC>k
 nnoremap <Leader>/ :.s/^\(\s*-\)\(.*\)/\1\~\~\2\~\~/<CR>:noh<CR>j
 nnoremap <Leader>i :/#* >>>Inspiration<CR>/^###* <CR>Nzt
 
-
 nnoremap <Leader><Right>
       \ :.w ! IFS= read -r line;
       \ c=$(echo $line \| sed -ne "s/^\#@\(.*\)/\\1/p");
       \ if [ -n "$c" ]; then eval "$c";
-      \ else eval 'tmux send-keys -t {right-of} "$line" C-m';
+      \ else line=$(echo $line \| sed "s/;/\\\\;/g");
+      \ eval 'tmux send-keys -t {right-of} "$line" C-m';
       \ fi;<CR><CR><Down>
 nnoremap <Leader><Down>
       \ :.w ! IFS= read -r line;
       \ c=$(echo $line \| sed -ne "s/^\#@\(.*\)/\\1/p");
       \ if [ -n "$c" ]; then eval "$c";
-      \ else eval 'tmux send-keys -t {down-of} "$line" C-m';
+      \ else line=$(echo $line \| sed "s/;/\\\\;/g");
+      \ eval 'tmux send-keys -t {down-of} "$line" C-m';
       \ fi;<CR><CR><Down>
 nnoremap <Leader><Up>
       \ :.w ! IFS= read -r line;
       \ c=$(echo $line \| sed -ne "s/^\#@\(.*\)/\\1/p");
       \ if [ -n "$c" ]; then eval "$c";
-      \ else eval 'tmux send-keys -t {up-of} "$line" C-m';
+      \ else line=$(echo $line \| sed "s/;/\\\\;/g");
+      \ eval 'tmux send-keys -t {up-of} "$line" C-m';
       \ fi;<CR><CR><Down>
 nnoremap <Leader><Left>
       \ :.w ! IFS= read -r line;
       \ c=$(echo $line \| sed -ne "s/^\#@\(.*\)/\\1/p");
       \ if [ -n "$c" ]; then eval "$c";
-      \ else eval 'tmux send-keys -t {left-of} "$line" C-m';
+      \ else line=$(echo $line \| sed "s/;/\\\\;/g");
+      \ eval 'tmux send-keys -t {left-of} "$line" C-m';
       \ fi;<CR><CR><Down>
 
 highlight Search cterm=NONE ctermfg=grey ctermbg=blue
