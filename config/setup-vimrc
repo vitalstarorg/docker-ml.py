@@ -9,4 +9,5 @@ Plug '907th/vim-auto-save'
 Plug 'djoshea/vim-autoread'
 Plug 'vim-scripts/auto_autoread.vim'
 Plug 'vitalstarorg/multiplayer.vim'
+Plug 'vitalstarorg/vim-vfutils.vim'
 call plug#end()
